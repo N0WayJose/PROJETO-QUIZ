@@ -428,7 +428,7 @@ else:
                     {"texto": "Calcule a integral: ∫ 5 dx", "resp": "5x + C", "expl": "Constante * x. Adicione C.", "img": {"tipo": "integral", "func": "5"}},
                     {"texto": "A integral definida de 0 a 2 de 2x dx vale:", "resp": "4", "expl": "A primitiva é x². Avaliando de 0 a 2: 2² - 0² = 4.", "img": {"tipo": "area", "func": "2*x"}}
                 ]
-
+# Exemplo
                 if st.button("Gerar nova Questão", key="btn_sort_int"):
                     st.session_state.int_q_atual = random.choice(questoes_int)
                     st.rerun()
