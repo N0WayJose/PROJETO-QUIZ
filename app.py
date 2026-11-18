@@ -5,102 +5,92 @@ import matplotlib.pyplot as plt
 import random
 
 # ==========================================
-# 1. CONFIGURAÇÃO E CSS CUSTOMIZADO (TEMA ROXO)
+# 1. CONFIGURAÇÃO E CSS CUSTOMIZADO
 # ==========================================
-st.set_page_config(page_title="Plataforma de Matemática", page_icon="🧮", layout="centered")
+st.set_page_config(page_title="Plataforma de Matemática", layout="centered")
 
-# Injetando o CSS para mudar todo o visual
 st.markdown("""
 <style>
     /* Fundo escuro com degradê leve */
     .stApp {
-        background: linear-gradient(180deg, #1e1e2f 0%, #0d0d14 100%);
-        color: #ffffff;
+        background: linear-gradient(180deg, #1a1a2e 0%, #0f0f16 100%);
+        color: #e0e0e0;
     }
     
-    /* Animação de Fade-Down para o conteúdo */
+    /* Animação de Fade-Down */
     @keyframes fadeDown {
-        from { opacity: 0; transform: translateY(-20px); }
+        from { opacity: 0; transform: translateY(-15px); }
         to { opacity: 1; transform: translateY(0); }
     }
     .block-container {
-        animation: fadeDown 0.8s ease-out;
+        animation: fadeDown 0.6s ease-out;
         padding-top: 3rem !important;
+        max-width: 800px; /* Centraliza melhor o conteúdo */
     }
 
     /* Títulos e Textos */
     h1, h2, h3, h4, p, label {
-        color: #e0e0ff !important;
+        color: #e0e0e0 !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    h1 { text-align: center; margin-bottom: 2rem; font-weight: 700; }
+    h1 { text-align: center; margin-bottom: 2rem; font-weight: 600; letter-spacing: 1px; }
     
     /* Estilo das Abas (Tabs) */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 20px;
+        gap: 10px;
         justify-content: center;
+        margin-bottom: 20px;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #2a2a40;
-        border-radius: 10px;
-        padding: 10px 20px;
-        color: #b0b0d0;
-        border: 1px solid #4a4a6a;
-        transition: all 0.3s ease;
+        background-color: #24243a;
+        border-radius: 8px;
+        padding: 10px 24px;
+        color: #a0a0b0;
+        border: 1px solid #3a3a5a;
+        transition: all 0.2s ease;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #6a1b9a !important;
-        color: white !important;
-        border-color: #9c27b0 !important;
-        box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
+        background-color: #6200ea !important;
+        color: #ffffff !important;
+        border-color: #7c43bd !important;
     }
 
-    /* ESTILO DOS BOTÕES DE OPÇÃO (Rádio Buttons como Cartões) */
-    div[role="radiogroup"] {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    div[role="radiogroup"] label {
-        background-color: #2a2a40;
-        border: 2px solid #4a4a6a;
-        padding: 15px 20px;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-    }
-    /* Esconde a bolinha padrão do rádio */
-    div[role="radiogroup"] label > div:first-child {
-        display: none !important;
-    }
-    /* Efeito ao passar o mouse ou selecionar */
-    div[role="radiogroup"] label:hover {
-        border-color: #9c27b0;
-        background-color: #3a3a55;
-    }
-    div[role="radiogroup"] label[data-checked="true"] {
-        border-color: #d500f9;
-        background-color: #4a1a6a;
-        box-shadow: 0 0 10px rgba(213, 0, 249, 0.4);
-    }
-
-    /* Botões normais (Sortear, Verificar) */
+    /* Botões Padrão (Sortear, Verificar) */
     .stButton > button {
-        background: linear-gradient(90deg, #6a1b9a, #9c27b0);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        font-weight: bold;
+        background-color: #2a2a40;
+        color: #ffffff;
+        border: 1px solid #6200ea;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.2s;
         width: 100%;
-        transition: transform 0.2s;
     }
     .stButton > button:hover {
-        transform: scale(1.02);
-        background: linear-gradient(90deg, #7b1fa2, #ab47bc);
+        background-color: #6200ea;
+        border-color: #7c43bd;
         color: white;
+    }
+
+    /* Limpando o visual dos Radio Buttons */
+    div[role="radiogroup"] label {
+        padding: 8px 12px;
+        background-color: #1e1e2f;
+        border-radius: 6px;
+        margin-bottom: 5px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+    }
+    div[role="radiogroup"] label:hover {
+        background-color: #2a2a40;
+        border: 1px solid #3a3a5a;
+    }
+    
+    /* Caixas de mensagem (Sucesso, Erro, Info) */
+    .stAlert {
+        background-color: #1e1e2f !important;
+        border: 1px solid #3a3a5a !important;
+        color: #e0e0e0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -115,17 +105,16 @@ def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico"):
     y_vals = f_num(x_vals)
     
     fig, ax = plt.subplots(figsize=(8, 4))
-    # Deixando o gráfico no tema escuro
-    fig.patch.set_facecolor('#1e1e2f')
-    ax.set_facecolor('#1e1e2f')
+    fig.patch.set_facecolor('#1a1a2e')
+    ax.set_facecolor('#1a1a2e')
     
-    ax.plot(x_vals, y_vals, color='#d500f9', linewidth=3)
-    ax.axhline(0, color='#888888', linewidth=1)
-    ax.axvline(0, color='#888888', linewidth=1)
-    ax.grid(True, linestyle='--', alpha=0.3, color='#888888')
-    ax.set_title(titulo, color='white')
-    ax.tick_params(colors='white')
-    ax.legend(["f(x)"], facecolor='#2a2a40', labelcolor='white')
+    ax.plot(x_vals, y_vals, color='#b388ff', linewidth=2) # Roxo mais claro para o gráfico
+    ax.axhline(0, color='#555555', linewidth=1)
+    ax.axvline(0, color='#555555', linewidth=1)
+    ax.grid(True, linestyle='--', alpha=0.2, color='#777777')
+    ax.set_title(titulo, color='#e0e0e0')
+    ax.tick_params(colors='#a0a0b0')
+    ax.legend(["f(x)"], facecolor='#24243a', labelcolor='#e0e0e0', framealpha=0.8)
     st.pyplot(fig)
     plt.close(fig)
 
@@ -139,38 +128,34 @@ if 'pagina_atual' not in st.session_state:
 # TELA INICIAL (MENU CENTRALIZADO)
 # ==========================================
 if st.session_state.pagina_atual == "menu":
-    st.title("🧮 Plataforma de Matemática")
-    st.markdown("<p style='text-align: center; font-size: 1.2rem;'>Escolha um módulo para estudar e praticar:</p>", unsafe_allow_html=True)
+    st.title("Plataforma de Matemática")
+    st.markdown("<p style='text-align: center; color: #a0a0b0; margin-bottom: 3rem;'>Selecione um módulo para estudar</p>", unsafe_allow_html=True)
     
-    st.write("") # Espaçamento
-    
-    # Criando colunas para centralizar os botões grandes
-    col1, col2 = st.columns(2, gap="large")
+    col1, col2 = st.columns(2, gap="medium")
     
     with col1:
-        if st.button("📈 Aula 1: Funções", key="menu_func"):
+        if st.button("Aula 1: Funções", key="menu_func", use_container_width=True):
             st.session_state.pagina_atual = "func"
             st.rerun()
-        if st.button("📉 Aula 3: Derivadas", key="menu_der"):
+        if st.button("Aula 3: Derivadas", key="menu_der", use_container_width=True):
             st.session_state.pagina_atual = "der"
             st.rerun()
             
     with col2:
-        if st.button("➡️ Aula 2: Limites", key="menu_lim"):
+        if st.button("Aula 2: Limites", key="menu_lim", use_container_width=True):
             st.session_state.pagina_atual = "lim"
             st.rerun()
-        if st.button("∫ Aula 4: Integrais", key="menu_int"):
+        if st.button("Aula 4: Integrais", key="menu_int", use_container_width=True):
             st.session_state.pagina_atual = "int"
             st.rerun()
 
-    st.markdown("<br><br><hr><p style='text-align: center; color: #888;'>Projeto Acadêmico de Cálculo</p>", unsafe_allow_html=True)
+    st.markdown("<br><br><hr style='border-color: #3a3a5a;'><p style='text-align: center; color: #666; font-size: 0.9rem;'>Projeto Acadêmico de Cálculo</p>", unsafe_allow_html=True)
 
 # ==========================================
 # MÓDULOS (CONTEÚDO)
 # ==========================================
 else:
-    # Botão de Voltar no topo
-    if st.button("⬅️ Voltar ao Menu Principal"):
+    if st.button("Voltar ao Menu Principal"):
         st.session_state.pagina_atual = "menu"
         st.rerun()
 
@@ -179,7 +164,7 @@ else:
     # ------------------------------------------
     if st.session_state.pagina_atual == "func":
         st.header("Aula 1: Funções")
-        tab_teoria, tab_pratica = st.tabs(["📖 Teoria", "✍️ Prática (Quiz)"])
+        tab_teoria, tab_pratica = st.tabs(["Teoria", "Prática (Quiz)"])
         
         with tab_teoria:
             st.subheader("Resumo Teórico")
@@ -205,7 +190,7 @@ else:
                 {"tipo": "grafico", "subtipo": "constante"}
             ]
 
-            if st.button("🔄 Sortear Nova Questão"):
+            if st.button("Sortear Nova Questão"):
                 st.session_state.func_q_atual = random.choice(questoes_func)
                 st.rerun() 
 
@@ -260,19 +245,19 @@ else:
                     opcoes = sorted(list(set(opcoes)))
                 else:
                     random.shuffle(opcoes)
-                opcoes.insert(0, "Selecione uma opção...")
                 
-                resp_user = st.radio("Sua resposta:", opcoes, key=f"radio_{q['tipo']}_{str(resp_certa)}")
+                # AQUI ESTÁ A MÁGICA: index=None remove a opção "Selecione..."
+                resp_user = st.radio("Sua resposta:", opcoes, index=None, key=f"radio_{q['tipo']}_{str(resp_certa)}")
                 
                 if st.button("Verificar Resposta", key="btn_ver_func"):
-                    if resp_user == "Selecione uma opção...":
-                        st.warning("Escolha uma opção!")
+                    if resp_user is None:
+                        st.warning("Por favor, selecione uma opção antes de verificar.")
                     elif resp_user == str(resp_certa):
-                        st.success(f"✅ **Você acertou!** A resposta é {resp_certa}.")
-                        st.info(f"**Passo a passo:** {explicacao}")
+                        st.success(f"Você acertou! A resposta é {resp_certa}.")
+                        st.info(f"Passo a passo: {explicacao}")
                     else:
-                        st.error(f"❌ **Você errou.** A resposta correta é {resp_certa}.")
-                        st.info(f"**Passo a passo:** {explicacao}")
+                        st.error(f"Você errou. A resposta correta é {resp_certa}.")
+                        st.info(f"Passo a passo: {explicacao}")
                     
                     if q["tipo"] in ["afim", "quadratica"]:
                         st.write("### Visualização Gráfica")
@@ -285,7 +270,7 @@ else:
     # ------------------------------------------
     elif st.session_state.pagina_atual == "lim":
         st.header("Aula 2: Limites")
-        tab_teoria, tab_pratica = st.tabs(["📖 Teoria", "✍️ Prática (Quiz)"])
+        tab_teoria, tab_pratica = st.tabs(["Teoria", "Prática (Quiz)"])
         
         with tab_teoria:
             st.subheader("Resumo Teórico")
@@ -307,7 +292,7 @@ else:
             if 'lim_q_atual' not in st.session_state:
                 st.session_state.lim_q_atual = random.choice(questoes_lim)
 
-            if st.button("🔄 Sortear Nova Questão"):
+            if st.button("Sortear Nova Questão"):
                 st.session_state.lim_q_atual = random.choice(questoes_lim)
                 st.rerun()
 
@@ -316,26 +301,25 @@ else:
             
             opcoes = [str(q['resp']), str(q['resp'] + 2), "0", "Inexistente"]
             opcoes = sorted(list(set(opcoes)))
-            opcoes.insert(0, "Selecione uma opção...")
             
-            resp_user = st.radio("Sua resposta:", opcoes, key=f"lim_{q['a']}_{q['resp']}")
+            resp_user = st.radio("Sua resposta:", opcoes, index=None, key=f"lim_{q['a']}_{q['resp']}")
             
             if st.button("Verificar Resposta", key="btn_ver_lim"):
-                if resp_user == "Selecione uma opção...":
-                    st.warning("Escolha uma opção!")
+                if resp_user is None:
+                    st.warning("Por favor, selecione uma opção antes de verificar.")
                 elif resp_user == str(q['resp']):
-                    st.success(f"✅ **Você acertou!** O limite é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.success(f"Você acertou! O limite é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
                 else:
-                    st.error(f"❌ **Você errou.** O limite correto é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.error(f"Você errou. O limite correto é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
 
     # ------------------------------------------
     # MÓDULO 3: DERIVADAS
     # ------------------------------------------
     elif st.session_state.pagina_atual == "der":
         st.header("Aula 3: Derivadas")
-        tab_teoria, tab_pratica = st.tabs(["📖 Teoria", "✍️ Prática (Quiz)"])
+        tab_teoria, tab_pratica = st.tabs(["Teoria", "Prática (Quiz)"])
         
         with tab_teoria:
             st.subheader("Resumo Teórico")
@@ -357,7 +341,7 @@ else:
             if 'der_q_atual' not in st.session_state:
                 st.session_state.der_q_atual = random.choice(questoes_der)
 
-            if st.button("🔄 Sortear Nova Questão"):
+            if st.button("Sortear Nova Questão"):
                 st.session_state.der_q_atual = random.choice(questoes_der)
                 st.rerun()
 
@@ -366,26 +350,25 @@ else:
             
             opcoes = [q['resp'], "3x² + 2", "6x + 2x", "0"]
             opcoes = sorted(list(set(opcoes)))
-            opcoes.insert(0, "Selecione uma opção...")
             
-            resp_user = st.radio("Sua resposta:", opcoes, key=f"der_{q['f']}")
+            resp_user = st.radio("Sua resposta:", opcoes, index=None, key=f"der_{q['f']}")
             
             if st.button("Verificar Resposta", key="btn_ver_der"):
-                if resp_user == "Selecione uma opção...":
-                    st.warning("Escolha uma opção!")
+                if resp_user is None:
+                    st.warning("Por favor, selecione uma opção antes de verificar.")
                 elif resp_user == q['resp']:
-                    st.success(f"✅ **Você acertou!** A derivada é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.success(f"Você acertou! A derivada é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
                 else:
-                    st.error(f"❌ **Você errou.** A derivada correta é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.error(f"Você errou. A derivada correta é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
 
     # ------------------------------------------
     # MÓDULO 4: INTEGRAIS
     # ------------------------------------------
     elif st.session_state.pagina_atual == "int":
         st.header("Aula 4: Integrais")
-        tab_teoria, tab_pratica = st.tabs(["📖 Teoria", "✍️ Prática (Quiz)"])
+        tab_teoria, tab_pratica = st.tabs(["Teoria", "Prática (Quiz)"])
         
         with tab_teoria:
             st.subheader("Resumo Teórico")
@@ -407,7 +390,7 @@ else:
             if 'int_q_atual' not in st.session_state:
                 st.session_state.int_q_atual = random.choice(questoes_int)
 
-            if st.button("🔄 Sortear Nova Questão"):
+            if st.button("Sortear Nova Questão"):
                 st.session_state.int_q_atual = random.choice(questoes_int)
                 st.rerun()
 
@@ -416,18 +399,17 @@ else:
             
             opcoes = [q['resp'], "x² + 3x", "x³/3 + C", "0"]
             opcoes = sorted(list(set(opcoes)))
-            opcoes.insert(0, "Selecione uma opção...")
             
-            resp_user = st.radio("Sua resposta:", opcoes, key=f"int_{q['f']}")
+            resp_user = st.radio("Sua resposta:", opcoes, index=None, key=f"int_{q['f']}")
             
             if st.button("Verificar Resposta", key="btn_ver_int"):
-                if resp_user == "Selecione uma opção...":
-                    st.warning("Escolha uma opção!")
+                if resp_user is None:
+                    st.warning("Por favor, selecione uma opção antes de verificar.")
                 elif resp_user == q['resp']:
-                    st.success(f"✅ **Você acertou!** A integral é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.success(f"Você acertou! A integral é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
                 else:
-                    st.error(f"❌ **Você errou.** A integral correta é {q['resp']}.")
-                    st.info(f"**Passo a passo:** {q['expl']}")
+                    st.error(f"Você errou. A integral correta é {q['resp']}.")
+                    st.info(f"Passo a passo: {q['expl']}")
 
-st.markdown("<br><hr><p style='text-align: center; color: #666;'>Desenvolvido como projeto acadêmico.</p>", unsafe_allow_html=True)
+st.markdown("<br><hr style='border-color: #3a3a5a;'><p style='text-align: center; color: #666; font-size: 0.9rem;'>Desenvolvido como projeto acadêmico.</p>", unsafe_allow_html=True)
