@@ -473,4 +473,4 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-st.markdown("<br><hr style='border-color: #3a3a5a;'><p style='text-align: center; color: #666; font-size: 0.9rem;'>Desenvolvido como projeto acadêmico.</p>", unsafe_allow_html=True)
+st.markdown("<br><hr style='border-color: #3a3a5a;'><p style='text-align: center; color: #666; font-size: 0.9rem;'>Desenvolvido como um projeto para Flaviana.</p>", unsafe_allow_html=True)
