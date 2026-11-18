@@ -106,7 +106,7 @@ st.markdown("""
 # ==========================================
 # FUNÇÕES DE GERAÇÃO DE GRÁFICOS
 # ==========================================
-def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico", preencher_area=False):
+def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico", preencher_area=False, esconder_legenda=False):
     x = sp.Symbol('x')
     f_num = sp.lambdify(x, expr_sympy, 'numpy')
     x_vals = np.linspace(x_min, x_max, 400)
@@ -116,7 +116,10 @@ def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico", preencher_
     fig.patch.set_facecolor('#1a1a2e')
     ax.set_facecolor('#1a1a2e')
     
-    ax.plot(x_vals, y_vals, color='#b388ff', linewidth=2)
+    # Se for esconder, o label é vazio, senão é f(x)
+    label_linha = "" if esconder_legenda else "f(x)"
+    ax.plot(x_vals, y_vals, color='#b388ff', linewidth=2, label=label_linha)
+    
     ax.axhline(0, color='#555555', linewidth=1)
     ax.axvline(0, color='#555555', linewidth=1)
     ax.grid(True, linestyle='--', alpha=0.2, color='#777777')
@@ -125,6 +128,10 @@ def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico", preencher_
     
     if preencher_area:
         ax.fill_between(x_vals, y_vals, 0, where=(x_vals >= x_min), color='#6200ea', alpha=0.3)
+    
+    # Só mostra a legenda se NÃO for para esconder
+    if not esconder_legenda:
+        ax.legend(facecolor='#24243a', labelcolor='#e0e0e0', framealpha=0.8)
     
     st.pyplot(fig)
     plt.close(fig)
@@ -181,13 +188,13 @@ else:
                 if 'func_q_atual' not in st.session_state:
                     st.session_state.func_q_atual = None
 
-                # Banco de questões: 'imagem' define o que será mostrado na lateral
+                # Adicionei a flag "esconder_nome" para a lógica do gráfico
                 questoes_func = [
-                    {"texto": "f(x) = 2x + 3. Qual o valor de f(4)?", "resp": "11", "expl": "2(4) + 3 = 11.", "img": {"tipo": "afim", "a": 2, "b": 3}},
-                    {"texto": "f(x) = x² - 4. Qual o valor de f(3)?", "resp": "5", "expl": "3² - 4 = 9 - 4 = 5.", "img": {"tipo": "quadratica", "a": 1, "b": 0, "c": -4}},
-                    {"texto": "Qual é o tipo de gráfico que representa f(x) = 3x² + 2x - 1?", "resp": "Parábola", "expl": "Funções quadráticas (ax²) geram parábolas.", "img": {"tipo": "quadratica", "a": 3, "b": 2, "c": -1}},
-                    {"texto": "A função f(x) = 7 é do tipo:", "resp": "Constante", "expl": "O valor não muda, f(x) é sempre 7.", "img": {"tipo": "constante", "c": 7}},
-                    {"texto": "A função f(x) = -2x + 5 é crescente ou decrescente?", "resp": "Decrescente", "expl": "O coeficiente 'a' é negativo (-2).", "img": {"tipo": "afim", "a": -2, "b": 5}}
+                    {"texto": "f(x) = 2x + 3. Qual o valor de f(4)?", "resp": "11", "expl": "2(4) + 3 = 11.", "img": {"tipo": "afim", "a": 2, "b": 3}, "esconder_nome": False},
+                    {"texto": "f(x) = x² - 4. Qual o valor de f(3)?", "resp": "5", "expl": "3² - 4 = 9 - 4 = 5.", "img": {"tipo": "quadratica", "a": 1, "b": 0, "c": -4}, "esconder_nome": False},
+                    {"texto": "Qual é o tipo de gráfico que representa f(x) = 3x² + 2x - 1?", "resp": "Parábola", "expl": "Funções quadráticas (ax²) geram parábolas.", "img": {"tipo": "quadratica", "a": 3, "b": 2, "c": -1}, "esconder_nome": True}, # <--- ESCONDE AQUI
+                    {"texto": "A função f(x) = 7 é do tipo:", "resp": "Constante", "expl": "O valor não muda, f(x) é sempre 7.", "img": {"tipo": "constante", "c": 7}, "esconder_nome": True}, # <--- ESCONDE AQUI
+                    {"texto": "A função f(x) = -2x + 5 é crescente ou decrescente?", "resp": "Decrescente", "expl": "O coeficiente 'a' é negativo (-2).", "img": {"tipo": "afim", "a": -2, "b": 5}, "esconder_nome": False}
                 ]
 
                 if st.button("Sortear Nova Questão", key="btn_sort_func"):
@@ -199,7 +206,7 @@ else:
                     st.write(f"**{q['texto']}**")
                     
                     opcoes = [q['resp'], "10", "Parábola", "Constante", "5"]
-                    opcoes = sorted(list(set(opcoes))) # Remove duplicatas
+                    opcoes = sorted(list(set(opcoes)))
                     
                     resp_user = st.radio("Sua resposta:", opcoes, index=None, key=f"radio_func_{q['texto']}")
                     
@@ -213,19 +220,35 @@ else:
                             st.info(f"Resposta correta: {q['resp']}. Passo a passo: {q['expl']}")
 
         with col_imagem:
-            st.write("<br><br>", unsafe_allow_html=True) # Espaçamento
+            st.write("<br><br>", unsafe_allow_html=True) 
             if st.session_state.func_q_atual and "img" in st.session_state.func_q_atual:
                 img_data = st.session_state.func_q_atual["img"]
+                esconder = st.session_state.func_q_atual.get("esconder_nome", False)
+                
                 x = sp.Symbol('x')
+                
+                # Lógica para definir o título do gráfico na tela
+                if esconder:
+                    titulo_grafico = "Gráfico de f(x)" # Título neutro
+                else:
+                    if img_data["tipo"] == "afim":
+                        titulo_grafico = f"Visualização: f(x) = {img_data['a']}x + {img_data['b']}"
+                    elif img_data["tipo"] == "quadratica":
+                        titulo_grafico = "Visualização: Parábola"
+                    else:
+                        titulo_grafico = f"Visualização: f(x) = {img_data['c']}"
+                
+                # Desenhando a função
                 if img_data["tipo"] == "afim":
                     expr = img_data["a"] * x + img_data["b"]
-                    plotar_funcao(expr, titulo=f"Visualização: f(x) = {img_data['a']}x + {img_data['b']}")
                 elif img_data["tipo"] == "quadratica":
                     expr = img_data["a"] * x**2 + img_data["b"] * x + img_data["c"]
-                    plotar_funcao(expr, titulo="Visualização: Parábola")
                 elif img_data["tipo"] == "constante":
                     expr = sp.Integer(img_data["c"])
-                    plotar_funcao(expr, titulo=f"Visualização: f(x) = {img_data['c']}")
+                
+                # Passamos o título e se deve esconder a legenda
+                plotar_funcao(expr, titulo=titulo_grafico, esconder_legenda=esconder)
+                
             else:
                 st.markdown("""
                 <div class="dica-card">
