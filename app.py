@@ -103,9 +103,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
+# Isso irá mostrar os grafícos do nosso projeto!
 # FUNÇÕES DE GERAÇÃO DE GRÁFICOS
-# ==========================================
 def plotar_funcao(expr_sympy, x_min=-10, x_max=10, titulo="Gráfico", preencher_area=False, esconder_legenda=False):
     x = sp.Symbol('x')
     f_num = sp.lambdify(x, expr_sympy, 'numpy')
@@ -234,7 +233,7 @@ else:
                     if img_data["tipo"] == "afim":
                         titulo_grafico = f"Visualização: f(x) = {img_data['a']}x + {img_data['b']}"
                     elif img_data["tipo"] == "quadratica":
-                        titulo_grafico = "Visualização: Parábola"
+                        titulo_grafico = "Visualização: Gráfico abaixo."
                     else:
                         titulo_grafico = f"Visualização: f(x) = {img_data['c']}"
                 
