@@ -197,7 +197,7 @@ else:
                     {"texto": "A função f(x) = -2x + 5 é crescente ou decrescente?", "resp": "Decrescente", "expl": "O coeficiente 'a' é negativo (-2).", "img": {"tipo": "afim", "a": -2, "b": 5}, "esconder_nome": False}
                 ]
 
-                if st.button("Sortear Nova Questão", key="btn_sort_func"):
+                if st.button("Gerar nova questão!", key="btn_sort_func"):
                     st.session_state.func_q_atual = random.choice(questoes_func)
                     st.rerun() 
 
@@ -280,7 +280,7 @@ else:
                     {"texto": "O limite de uma constante é igual a:", "resp": "Ela mesma", "expl": "Não importa o valor de x, a constante não muda.", "img": {"tipo": "texto"}}
                 ]
 
-                if st.button("Sortear Nova Questão", key="btn_sort_lim"):
+                if st.button("Gerar nova questão!", key="btn_sort_lim"):
                     st.session_state.lim_q_atual = random.choice(questoes_lim)
                     st.rerun()
 
@@ -348,7 +348,7 @@ else:
                     {"texto": "Qual a derivada de f(x) = x⁴ - 3x?", "resp": "4x³ - 3", "expl": "x⁴ -> 4x³. -3x -> -3.", "img": {"tipo": "derivada", "func": "x**4 - 3*x"}}
                 ]
 
-                if st.button("Sortear Nova Questão", key="btn_sort_der"):
+                if st.button("Gerar nova Questão", key="btn_sort_der"):
                     st.session_state.der_q_atual = random.choice(questoes_der)
                     st.rerun()
 
@@ -430,7 +430,7 @@ else:
                     {"texto": "A integral definida de 0 a 2 de 2x dx vale:", "resp": "4", "expl": "A primitiva é x². Avaliando de 0 a 2: 2² - 0² = 4.", "img": {"tipo": "area", "func": "2*x"}}
                 ]
 
-                if st.button("Sortear Nova Questão", key="btn_sort_int"):
+                if st.button("Gerar nova Questão", key="btn_sort_int"):
                     st.session_state.int_q_atual = random.choice(questoes_int)
                     st.rerun()
 
